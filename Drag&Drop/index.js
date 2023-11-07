@@ -9,20 +9,38 @@ const market = document.getElementById('market');
 const marketWidthInput = document.getElementById('marketWidth');
 const marketHeightInput = document.getElementById('marketHeight');
 const marketSizeText = document.getElementById('marketSize');
+    // Predefined list of custom stand types
+const listStand = [];
 // Function to add a stand to the market
 function addStand() {
-    const size = prompt('Taille du stand (petit, moyen, grand) ?');
-    const name = prompt('Nom du stand ?');
 
-    // Validation
-    if (!name || !size || (size !== 'petit' && size !== 'moyen' && size !== 'grand')) {
-        alert('Création du stand annulée en raison d’une entrée non valide.');
-        return;
+
+    // Convert the list of custom stand types into a string, joined by commas
+    const customTypesString = listStand.join(',');
+
+    // Prompt the user for the size, including the custom types
+    const size = prompt(`type of the stand (small, medium, large, ${customTypesString}) ?`);
+
+    
+    // if it s not a predefined type, ask for the size
+    if ((size !== 'small' && size !== 'medium' && size !== 'large')) {
+        prompt('what size do you want  for ${size} ?')
+        const newStand = document.createElement('div');
+        const color = prompt('what color do you want ?');
+
+
+    }
+    else { // if it s a predefined type, ask for the name
+        const newStand = document.createElement('div');
+        const name = prompt('Name of the stand ?');
+        newStand.setAttribute('data-name', name);
+
+
     }
 
-    const newStand = document.createElement('div');
+
     newStand.classList.add('stand');
-    newStand.setAttribute('data-name', name);
+    
     newStand.setAttribute('data-type', size);
 
     const standID = `stand-${currentStandID++}`;
@@ -36,6 +54,11 @@ function addStand() {
 
     addStandToList(newStand);
 }
+function createNewStand() {
+
+    listStand.push(prompt('Type of the stand ?'));
+
+}
 // A "Définir" gomb eseménykezelője
 function initialize() {
     const width = marketWidthInput.value;
@@ -45,9 +68,9 @@ function initialize() {
     if (width > 0 && height > 0) {
         market.style.width = width + 'px';
         market.style.height = height + 'px';
-        marketSizeText.textContent = `Largeur: ${width}px, Hauteur: ${height}px`;
+        marketSizeText.textContent = `widht: ${width}px, height: ${height}px`;
     } else {
-        marketSizeText.textContent = 'Veuillez entrer des valeurs positives pour la largeur et la hauteur.';
+        marketSizeText.textContent = 'please enter a positive number';
     }
 }
 
@@ -199,12 +222,6 @@ document.getElementById('market').addEventListener('mousemove', function (event)
     }
 }
 );
-// Event listeners for drag-and-drop functionality
-document.getElementById('market').addEventListener('mousedown', function (event) {
-    if (event.target.classList.contains('stand')) {
-        draggedStand = event.target;
-    }
-});
 
 
 
@@ -213,17 +230,47 @@ document.getElementById('market').addEventListener('mousedown', function (event)
 
 
 function rotateStand(event) {
+    // Get the stand element
+    const stand = event.target;
+
     // Get the current rotation value
-    const currentRotation = event.target.getAttribute('data-rotation');
-    const newRotation = (parseInt(currentRotation) + 90) % 180;
-    console.log(newRotation);
-    // Apply the new rotation
-    event.target.style.transform = `rotate(${newRotation}deg)`;
+    const currentRotation = parseInt(stand.getAttribute('data-rotation'));
+
+    // Calculate the new rotation value (toggle between 0 and 90 degrees)
+    const newRotation = (currentRotation + 90) % 180;
+
+    // Get the stand's dimensions
+    const width = stand.offsetWidth;
+    const height = stand.offsetHeight;
+
+    // Calculate the center of the stand
+    const centerX = stand.offsetLeft + width / 2;
+    const centerY = stand.offsetTop + height / 2;
+
+    // Calculate the new top-left coordinates after rotation
+    let newX, newY;
+    if (newRotation === 90) {
+        // The stand is rotated by 90 degrees
+        newX = centerX - height / 2;
+        newY = centerY - width / 2;
+    } else {
+        // The stand is rotated back to 0 degrees
+        newX = centerX - width / 2;
+        newY = centerY - height / 2;
+    }
+
+    // Apply the new rotation and position
+    stand.style.transform = `rotate(${newRotation}deg)`;
+    stand.style.left = `${newX}px`;
+    stand.style.top = `${newY}px`;
 
     // Update the data-rotation attribute
-    event.target.setAttribute('data-rotation', newRotation.toString());
-    console.log(event.target.getAttribute('data-rotation'));
+    stand.setAttribute('data-rotation', newRotation.toString());
+
 }
+
+// Make sure to attach this function to the double-click event as before
+
 
 document.getElementById('market').addEventListener('click', function (event) {
     if (event.target.classList.contains('stand')) {
@@ -240,6 +287,7 @@ function handleStandClick(event) {
         // C'est un double-clic
         rotateStand(event);
         updateStandPositionInList(event.target);
+        draggedStand = null;
     }
     lastClickTime = currentTime;
 }
@@ -248,7 +296,17 @@ document.getElementById('market').addEventListener('mouseup', function () {
         updateStandPositionInList(draggedStand);
         draggedStand = null;
         standHasBeenMoved = false;
+        console.log("Stand has been moved");
     }
 });
+
+// Event listeners for drag-and-drop functionality
+document.getElementById('market').addEventListener('mousedown', function (event) {
+    if (event.target.classList.contains('stand')) {
+        draggedStand = event.target;
+        console.log("Stand has been dragged");
+    }
+});
+
 
 
