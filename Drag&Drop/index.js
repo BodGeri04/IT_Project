@@ -14,31 +14,37 @@ const listStand = [];
 // Function to add a stand to the market
 function addStand() {
 
-
     // Convert the list of custom stand types into a string, joined by commas
     const customTypesString = listStand.join(',');
 
     // Prompt the user for the size, including the custom types
     const size = prompt(`type of the stand (small, medium, large, ${customTypesString}) ?`);
 
-    
+    const newStand = document.createElement('div');
     // if it s not a predefined type, ask for the size
-    if ((size !== 'small' && size !== 'medium' && size !== 'large')) {
-        prompt('what size do you want  for ${size} ?')
-        const newStand = document.createElement('div');
+    if ( listStand.includes(size)) {
         const color = prompt('what color do you want ?');
+        const widht = prompt('what widht do you want ?');
+        const height = prompt('what height do you want ?');
+        newStand.style.width = widht + 'px';
+        newStand.style.height = height + 'px';
+        newStand.style.background = color;
+
+
 
 
     }
-    else { // if it s a predefined type, ask for the name
-        const newStand = document.createElement('div');
-        const name = prompt('Name of the stand ?');
-        newStand.setAttribute('data-name', name);
-
-
+    else if ((size == 'small' || size == 'medium' || size == 'large')){ // if it s a predefined type, ask for the name
+        console.log('invalid type');
+    }
+    else {
+        console.log('invalid type');
+        alert('invalid type');
+        return;
     }
 
-
+    const name = prompt('Name of the stand ?');
+    newStand.setAttribute('data-name', name);
     newStand.classList.add('stand');
     
     newStand.setAttribute('data-type', size);
@@ -82,17 +88,17 @@ function setStandAttributes(stand, size) {
     let widht=marketWidthInput.value;
     let height=marketHeightInput.value
     switch (size) {
-        case 'grand':
+        case 'large':
             stand.style.width =widht/25+'px';
             stand.style.height =height/30+'px';
             stand.style.background = 'red';
             break;
-        case 'moyen':
+        case 'medium':
             stand.style.width = widht/40+'px';
             stand.style.height = height/30+'px';
             stand.style.background = 'yellow';
             break;
-        case 'petit':
+        case 'small':
             stand.style.width = widht/50+'px';
             stand.style.height = height/30+'px';
             stand.style.background = 'green';
@@ -133,7 +139,15 @@ function addStandToList(stand) {
     listItem.appendChild(deleteCrossForList);
     document.getElementById('standsList').appendChild(listItem);
 }
+//display the list of stands
+function displayListStand() {
+    const listStand = document.getElementById('standsList');
+    const listItems = document.querySelectorAll('#standsList li');
+    listItems.forEach(item => {
+        console.log(item.innerText);//ou console.log(item);
+    });
 
+}
 // Function to update the position of a stand in the list
 
 function updateStandPositionInList(stand) {
@@ -266,6 +280,7 @@ function rotateStand(event) {
 
     // Update the data-rotation attribute
     stand.setAttribute('data-rotation', newRotation.toString());
+    displayListStand();
 
 }
 
