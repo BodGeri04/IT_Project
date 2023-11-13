@@ -1,0 +1,35 @@
+#market {
+    width: 500px;
+    height: 500px;
+    border: 2px solid black;
+    position: relative;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-left: 10%;
+}
+
+.stand {
+    cursor: pointer;
+}
+
+#market .stand {
+    position: absolute;
+}
+.stand:active {
+    opacity: 0.5;
+}
+
+#container {
+display: flex;
+justify-content: space-between;
+}
+
+#standsListContainer {
+width: 300px;
+height: 500px;
+border: 1px solid black;
+padding: 10px;
+box-sizing: border-box;
+overflow-y: auto;
+margin-left: 20px;
+}
