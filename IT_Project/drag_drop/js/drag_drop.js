@@ -11,48 +11,109 @@ const marketHeightInput = document.getElementById('marketHeight');
 const marketSizeText = document.getElementById('marketSize');
     // Predefined list of custom stand types
 const listStand = [];
-// Function to add a stand to the market
-function addStand() {
+// Global array for predefined stand types
+const predefinedStandTypes = ['small', 'medium', 'large'];
 
-    // Convert the list of custom stand types into a string, joined by commas
-    const customTypesString = listStand.join(',');
+// Adjusted addStand function
+// Global object to store custom stand types with their attributes
+let customStandTypes = {};
 
-    // Prompt the user for the size, including the custom types
-    const size = prompt(`type of the stand (small, medium, large, ${customTypesString}) ?`);
+function addStand(type) {
+    const marketWidth = parseInt(marketWidthInput.value);
+    const marketHeight = parseInt(marketHeightInput.value);
 
-    const newStand = document.createElement('div');
-    // if it s not a predefined type, ask for the size
-    if ( listStand.includes(size)) {
-        const color = prompt('what color do you want ?');
-        const widht = prompt('what widht do you want ?');
-        const height = prompt('what height do you want ?');
-        newStand.style.width = widht + 'px';
-        newStand.style.height = height + 'px';
-        newStand.style.background = color;
-
-
-
-
-    }
-    else if ((size == 'small' || size == 'medium' || size == 'large')){ // if it s a predefined type, ask for the name
-        console.log('invalid type');
-    }
-    else {
-        console.log('invalid type');
-        alert('invalid type');
+    if (isNaN(marketWidth) ||isNaN(marketHeight)  ||marketWidth <= 0 || marketHeight <= 0) {
+        alert('Please enter the size of the room first!');
         return;
     }
+    console.log("type: " + type);
 
-    const name = prompt('Name of the stand ?');
-    newStand.setAttribute('data-name', name);
+    const newStand = document.createElement('div');
     newStand.classList.add('stand');
-    
-    newStand.setAttribute('data-type', size);
+    newStand.setAttribute('data-type', type);
+
+    // Check if type is custom and not previously defined
+    if (!predefinedStandTypes.includes(type) && !customStandTypes[type]) {
+        let color, width, height, name;
+
+        while (color === undefined) {
+            color = prompt('What color do you want?');
+            if (color === null) { // User cancelled the prompt
+                console.log('Stand creation cancelled.');
+                return; // Exit the function
+            } else if (!color) {
+                alert('Please enter a valid color.');
+                color = undefined; // Reset to undefined to continue the loop
+            }
+        }
+        
+        while (width === undefined || isNaN(width) || width <= 0) {
+            width = prompt('What width do you want?');
+            if (width === null) {
+                console.log('Stand creation cancelled.');
+                return; // Exit the function
+            } else if (!width || isNaN(width) || width <= 0) {
+                alert('Please enter a valid width (a positive number).');
+                width = undefined; // Reset to continue the loop
+            }
+        }
+        
+        while (height === undefined || isNaN(height) || height <= 0) {
+            height = prompt('What height do you want?');
+            if (height === null) {
+                console.log('Stand creation cancelled.');
+                return; // Exit the function
+            } else if (!height || isNaN(height) || height <= 0) {
+                alert('Please enter a valid height (a positive number).');
+                height = undefined; // Reset to continue the loop
+            }
+        }
+        
+        while (name === undefined) {
+            name = prompt('Name of the new stand type?');
+            if (name === null) {
+                console.log('Stand creation cancelled.');
+                return; // Exit the function
+            } else if (!name) {
+                alert('Please enter a valid name.');
+                name = undefined; // Reset to continue the loop
+            }
+        }
+        // Store custom type attributes and name
+        customStandTypes[type] = {
+            color: color,
+            width: width,
+            height: height,
+            name: name
+        };
+    }
+
+    if (customStandTypes[type]) {
+        // Apply stored attributes and name for custom types
+        newStand.style.width = customStandTypes[type].width + 'px';
+        newStand.style.height = customStandTypes[type].height + 'px';
+        newStand.style.background = customStandTypes[type].color;
+        newStand.setAttribute('data-name', customStandTypes[type].name);
+    }else if (predefinedStandTypes.includes(type)) {
+        // For predefined types, ask for the name each time
+        let name = undefined;
+        while (name === undefined) {
+            name = prompt('Name of the stand?');
+            if (name === null) {
+                console.log('Stand creation cancelled.');
+                return; // Exit the function
+            } else if (!name) {
+                alert('Please enter a valid name.');
+                name = undefined; // Reset to continue the loop
+            }
+        }
+        newStand.setAttribute('data-name', name);
+    }
 
     const standID = `stand-${currentStandID++}`;
     newStand.id = standID;
 
-    setStandAttributes(newStand, size);
+    setStandAttributes(newStand, type);
 
     // Set initial rotation to 0
     newStand.setAttribute('data-rotation', '0');
@@ -60,34 +121,73 @@ function addStand() {
 
     addStandToList(newStand);
 }
-function createNewStand() {
 
-    listStand.push(prompt('Type of the stand ?'));
+function createStandTypeButtons() {
+    let name = null;
+    const marketWidth = parseInt(marketWidthInput.value);
+    const marketHeight = parseInt(marketHeightInput.value);
+    if (isNaN(marketWidth) ||isNaN(marketHeight)  ||marketWidth <= 0 || marketHeight <= 0) {
+        alert('Please enter the size of the room first!');
+        return;
+    }
+    const buttonList = document.getElementById('buttonList');
+  
+    while (name === null) {
+        name = prompt('Type of the new stand you want to create?');
+        if (name === null) {
+            // Handle the cancel action, for example, by breaking the loop or taking some other action
+            console.log('Stand creation cancelled.');
+            return; // Exit the function if cancelled
+        } else if (!name) {
+            alert('Please enter a valid name.');
+            name = null; // Reset name to null to continue the loop
+        }
+    }
+    
 
+    const button = document.createElement('button');
+    button.innerText = name;
+    button.style.padding = '10px';
+    buttonList.appendChild(button);
+    
+    button.onclick = () => addStand(name);
 }
+
+//create small-medium-large button when the page is loaded
+window.onload = function() {
+    predefinedStandTypes.forEach(type => {
+        const button = document.createElement('button');
+        button.innerText = type;
+        button.style.padding = '10px';
+        document.getElementById('buttonList').appendChild(button);
+        button.onclick = () => addStand(type);
+    });
+};
+
+
+
 // A "Définir" gomb eseménykezelője
 function initialize() {
     const width = marketWidthInput.value;
     const height = marketHeightInput.value;
 
-    // Ellenőrzés: csak pozitív értékeket engedélyezünk
-    if (width > 0 && height > 0) {
-        market.style.width = width + 'px';
-        market.style.height = height + 'px';
-        marketSizeText.textContent = `widht: ${width}px, height: ${height}px`;
+    if ((width > 0 && width < 101)&&(height > 0 && height < 101)) {
+        market.style.width = width*10 + 'px';
+        market.style.height = height*10 + 'px';
+        marketSizeText.textContent = `width: ${width}meter, height: ${height}meter`;
     } else {
-        marketSizeText.textContent = 'please enter a positive number';
+        marketSizeText.textContent = 'The interval for the stand is 1-100!';
     }
 }
 
 
 
 
-
-function setStandAttributes(stand, size) {
+//TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO modifie the value of the stand
+function setStandAttributes(stand, type) {
     let widht=marketWidthInput.value;
     let height=marketHeightInput.value
-    switch (size) {
+    switch (type) {
         case 'large':
             stand.style.width =widht/25+'px';
             stand.style.height =height/30+'px';
@@ -103,6 +203,8 @@ function setStandAttributes(stand, size) {
             stand.style.height = height/30+'px';
             stand.style.background = 'green';
             break;
+        default:
+            console.log('yolo');
     }
 }
 
