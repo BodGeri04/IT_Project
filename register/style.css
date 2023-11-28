@@ -1,55 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+    /*background-color: #f4f4f4;*/
+    background-image: url("background.jpg");
+    background-size: 100% 170%;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-weight: bold;
-            color: #B11E31;
-            background-image:url('background.jpg'); 
-            background-size: 100%;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+h1 {
+    text-align: center;
+    color: #333;
+    /* 添加圣诞颜色 */
+    font-size: 2em;
+    text-shadow: 2px 2px 4px #fff;
+}
 
-        .container {
-            background-color: #F8AD1E;
-            /*border: 5px solid #46322b;*/
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            max-width: 400px;
-        }
+form {
+    max-width: 300px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-        h1 {
-            font-size: 24px;
-            text-align: center;
-        }
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+input[id="vcode"] {
+    width: 45%
+}
+input[value="Verification Code"]{
+    width: 50%
+}
 
-        input[type="text"] {
-            width: 90%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-        }
+.error {
+    color: red;
+    font-size: 12px;
+}
+.vcode{
+    color: red;
+}
 
-        input[type="submit"] {
-            background-color: #096344;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+input[type="submit"] {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    /* 添加圣诞效果 */
+    transition: background-color 0.3s ease-in-out;
+}
 
-        input[type="submit"]:hover {
-            background-color: #166138;
-        }
+input[type="submit"]:hover {
+    background-color: #ff6347; /* 使用圣诞红色 */
+}
+
+/* 添加圣诞装饰 */
+body::before {
+    content: '\2605'; /* Unicode 圣诞星号 */
+    font-size: 100px;
+    color: #f00;
+    position: fixed;
+    top: 50px;
+    left: 50px;
+    z-index: 1;
+    opacity: 0.1;
+    pointer-events: none;
+}
