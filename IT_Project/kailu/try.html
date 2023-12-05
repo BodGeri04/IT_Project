@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>简单网页</title>
+    <style type="text/css">
+        /* CSS样式，用于布局和样式化元素 */
+        #container {
+            display: flex;
+            align-items: center;
+        }
+        div {
+            width: 200px;
+            padding: 25px;
+            margin: 5px;
+        }
+        img {
+            width: 200px;
+            height: 100px;
+        }
+        button {
+            background-color: #4CAF50; /* 绿色按钮 */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        var currentIndex = 0;
+        var images = [];
+
+        function changeImage(direction) {
+            if (images.length === 0) {
+                alert('未加载图像数据！');
+                return;
+            }
+
+            if (direction === 'left') {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+            } else if (direction === 'right') {
+                currentIndex = (currentIndex + 1) % images.length;
+            }
+
+            // 更新图像元素的src属性，实现轮播
+            document.getElementById('eventImage1').src = images[currentIndex];
+            document.getElementById('eventImage2').src = images[(currentIndex + 1) % images.length];
+            document.getElementById('eventImage3').src = images[(currentIndex + 2) % images.length];
+        }
+
+        // 使用AJAX获取图像数据
+        function getImages() {
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // 解析JSON数据并存储到images数组中
+                        images = JSON.parse(xhr.responseText);
+                        // 显示第一张图像
+                        changeImage('right');
+                    } else {
+                        console.error('AJAX请求失败：' + xhr.status);
+                    }
+                }
+            };
+
+            // 发送AJAX请求
+            xhr.open('GET', 'get_images.php', true);
+            xhr.send();
+        }
+
+        // 在页面加载完成后调用getImages函数来获取图像数据
+        window.onload = function () {
+            getImages();
+        };
+    </script>
+</head>
+<body>
+    <div id="container">
+        <!-- 左侧切换按钮 -->
+        <button type="button" onclick="changeImage('left')">&#10094;</button>
+
+        <!-- 图片及相关信息的容器 -->
+        <div class="single_left_coloum floatleft">
+            <img id="eventImage1" src="" alt="" />
+            <h3>Previous event 1</h3>
+            <p>Description</p>
+            <a class="readmore" href="#">read more</a>
+        </div>
+
+        <div class="single_left_coloum floatleft">
+            <img id="eventImage2" src="" alt="" />
+            <h3>Previous event 2</h3>
+            <p>Description</p>
+            <a class="readmore" href="#">read more</a>
+        </div>
+
+        <div class="single_left_coloum floatleft">
+            <img id="eventImage3" src="" alt="" />
+            <h3>Previous event 3</h3>
+            <p>Description</p>
+            <a class="readmore" href="#">read more</a>
+        </div>
+
+        <!-- 右侧切换按钮 -->
+        <button type="button" onclick="changeImage('right')">&#10095;</button>
+
+        <!-- 文件上传表单 -->
+        <form action="sql.php" method="post" enctype="multipart/form-data">
+            <div><input type="file" multiple="multiple" accept="image/*" name="image"></div>
+            <div><input type="submit" value="submit"></div>
+        </form>
+    </div>
+</body>
+</html>
