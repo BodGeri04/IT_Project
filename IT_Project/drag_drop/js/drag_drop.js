@@ -32,11 +32,11 @@ function addStand(type) {
     const newStand = document.createElement('div');
     newStand.classList.add('stand');
     newStand.setAttribute('data-type', type);
-
+    
     // Check if type is custom and not previously defined
     if (!predefinedStandTypes.includes(type) && !customStandTypes[type]) {
         let color, width, height, name;
-
+        console.log("type: " + type);
         while (color === undefined) {
             color = prompt('What color do you want?');
             if (color === null) { // User cancelled the prompt
@@ -70,16 +70,15 @@ function addStand(type) {
             }
         }
         
-        while (name === undefined) {
-            name = prompt('Name of the new stand type?');
-            if (name === null) {
-                console.log('Stand creation cancelled.');
-                return; // Exit the function
-            } else if (!name) {
-                alert('Please enter a valid name.');
-                name = undefined; // Reset to continue the loop
-            }
+                while (name === undefined) {
+                    name = type;
+
         }
+
+        // Ajouter l'élément du nom du stand au stand
+        
+
+
         // Store custom type attributes and name
         customStandTypes[type] = {
             color: color,
@@ -95,6 +94,20 @@ function addStand(type) {
         newStand.style.height = customStandTypes[type].height + 'px';
         newStand.style.background = customStandTypes[type].color;
         newStand.setAttribute('data-name', customStandTypes[type].name);
+                // Créer un élément pour le nom du stand
+                const name = customStandTypes[type].name;
+                const standNameElement = document.createElement('span');
+                standNameElement.textContent = name.substring(0, 4); // Utiliser les 4 premiers caractères du nom du stand
+                standNameElement.classList.add('stand-name'); // Ajouter une classe pour le styliser
+                standNameElement.style.color = 'black'; // Définir la couleur du texte en noir
+                standNameElement.style.textAlign = 'center'; // Centrer le texte
+                standNameElement.style.display = 'block'; // Assurez-vous que l'élément span se comporte comme un bloc pour permettre le centrage
+                standNameElement.style.userSelect = 'none'; // Empêcher la sélection du texte
+                standNameElement.style.pointerEvents = 'none'; // Les événements de la souris seront ignorés sur cet élément
+
+               // standNameElement.style.fontSize = `calc(100% / ${x})`;//modifier caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                // Ajouter l'élément du nom du stand au stand
+                newStand.appendChild(standNameElement);
     }else if (predefinedStandTypes.includes(type)) {
         // For predefined types, ask for the name each time
         let name = undefined;
@@ -109,6 +122,20 @@ function addStand(type) {
             }
         }
         newStand.setAttribute('data-name', name);
+
+        const standNameElement = document.createElement('span');
+        standNameElement.textContent = name.substring(0, 4); // Utiliser les 4 premiers caractères du nom du stand
+        standNameElement.classList.add('stand-name'); // Ajouter une classe pour le styliser
+        standNameElement.style.color = 'black'; // Définir la couleur du texte en noir
+        standNameElement.style.textAlign = 'center'; // Centrer le texte
+        standNameElement.style.display = 'block'; // Assurez-vous que l'élément span se comporte comme un bloc pour permettre le centrage
+        standNameElement.style.userSelect = 'none'; // Empêcher la sélection du texte
+        standNameElement.style.pointerEvents = 'none'; // Les événements de la souris seront ignorés sur cet élément
+
+                    // Ajouter l'élément du nom du stand au stand
+                    newStand.appendChild(standNameElement);
+                // Créer un élément pour le nom du stand
+
 
     }
 
@@ -152,7 +179,7 @@ function createStandTypeButtons() {
     button.innerText = name;
     button.style.padding = '10px';
     buttonList.appendChild(button);
-    
+    console.log("name: " + name);
     button.onclick = () => addStand(name);
 }
 
@@ -196,6 +223,7 @@ function setStandAttributes(stand, type) {
         case 'large':
             stand.style.width =widht+'px';
             stand.style.height =height+'px';
+            console.log("width: " + stand.style.width);
             stand.style.background = 'red';
             stand.color = 'red';
             break;
@@ -219,19 +247,39 @@ function setStandAttributes(stand, type) {
 
 // Function to add a stand to the list
 
+
 function removeStand(stand) {
-    // Remove stand from the market
+    // Supprimer l'élément stand du marché
     stand.remove();
 
-    // Remove stand from the list
+    // Appeler la fonction pour supprimer le stand de la base de données
+    deleteStandByID(stand.id);
+
+    console.log('All Stands:', allStands);
+
     const listItems = document.querySelectorAll('#standsList li');
     listItems.forEach(item => {
-        if (item.innerText.includes(stand.id)) {
+        // Construire la chaîne à rechercher
+        const searchString = `ID: ${stand.id}`;
+        console.log("searchString: " + searchString);
+    
+        // Vérifier si l'élément de liste contient cette chaîne spécifique
+        if (item.innerText.includes(searchString)) {
+            console.log("item: " + item.innerText);
+
             item.remove();
         }
     });
+    
+
+    console.log("listItems: " + listItems);
+
 }
 
+    // Supprimer le stand de la liste HTML
+
+
+    
 function addStandToList(stand) {
     const type = stand.getAttribute('data-type');
     const standDetails = {
@@ -263,7 +311,8 @@ function addStandToList(stand) {
     listItem.innerText = standInfo;
 
     const deleteCrossForList = document.createElement('span');
-
+    stand.getAttribute('id')
+    
     deleteCrossForList.innerText = ' ×';
     deleteCrossForList.style.fontSize = '20px';
     deleteCrossForList.style.color = 'red';
@@ -290,7 +339,11 @@ function displayListStand() {
 }
 
 document.getElementById("sendDataBtn").addEventListener("click", function() {
-    
+    fetch('http://localhost:3000/clear-stands', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    console.log("data clear");
     allStands.forEach(stand => {
         const dataToSend = {
             ID: stand.ID, // ou générer un nouvel ID si nécessaire
@@ -304,7 +357,8 @@ document.getElementById("sendDataBtn").addEventListener("click", function() {
             X_position: stand.X, // Assurez-vous que cela correspond à 'X_position'
             Y_position: stand.Y  // Assurez-vous que cela correspond à 'Y_position'
         };
-        console.log(dataToSend);
+        console.log("data to sens"+dataToSend);
+
         fetch('http://localhost:3000/save-stand', {
             method: 'POST',
             headers: {
@@ -353,6 +407,7 @@ function updateStandPositionInList(stand) {
                 deleteCrossForList.classList.add('delete-cross-for-list');
                 deleteCrossForList.addEventListener('click', function () {
                     removeStand(stand);
+                
                 });
                 item.appendChild(deleteCrossForList);
             }
@@ -488,6 +543,20 @@ function updateStandAttributes(standID, newAttributes) {
         console.log("Stand non trouvé");
     }
 }
+function deleteStandByID(standID) {
+    // Trouver l'index du stand avec l'ID correspondant
+    const index = allStands.findIndex(s => s.ID == standID);
+
+    // Vérifier si le stand existe
+    if (index !== -1) {
+        // Supprimer le stand de la liste
+        allStands.splice(index, 1);
+        console.log("Stand supprimé avec l'ID : " + standID);
+    } else {
+        console.log("Stand non trouvé pour l'ID : " + standID);
+    }
+}
+
 // Make sure to attach this function to the double-click event as before
 
 
