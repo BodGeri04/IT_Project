@@ -31,7 +31,6 @@ app.post('/save-stand', (req, res) => {
     const { ID, Event_ID, Color, Name, Rotation, Type, Width, Height, X_position, Y_position } = req.body;
     console
     console.log("Reçu:", req.body); // Pour déboguer
-
     const sql = "INSERT INTO stands (ID, Event_ID, Color, Name, Rotation, Type, Width, Height, X_position, Y_position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     con.query(sql, [ID, Event_ID, Color, Name, Rotation, Type, Width, Height, X_position, Y_position], function(err, result) {
         if (err) {
@@ -41,6 +40,18 @@ app.post('/save-stand', (req, res) => {
         res.status(200).send({ message: "Données enregistrées avec succès" });
     });
 });
+
+app.post('/clear-stands', (req, res) => {
+    const sql = "TRUNCATE TABLE stands";
+    con.query(sql, function(err, result) {
+        if (err) {
+            res.status(500).send({ message: "Erreur lors de la suppression des données" });
+            throw err;
+        }
+        res.status(200).send({ message: "Table vidée avec succès" });
+    });
+});
+
 
 app.listen(3000, () => {
     console.log('Serveur démarré sur le port 3000');
