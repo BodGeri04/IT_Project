@@ -9,7 +9,7 @@ const market = document.getElementById('market');
 const marketWidthInput = document.getElementById('marketWidth');
 const marketHeightInput = document.getElementById('marketHeight');
 const marketSizeText = document.getElementById('marketSize');
-    // Predefined list of custom stand types
+// Predefined list of custom stand types
 const listStand = [];
 // Global array for predefined stand types
 const predefinedStandTypes = ['small', 'medium', 'large'];
@@ -23,7 +23,7 @@ function addStand(type) {
     const marketWidth = parseInt(marketWidthInput.value);
     const marketHeight = parseInt(marketHeightInput.value);
 
-    if (isNaN(marketWidth) ||isNaN(marketHeight)  ||marketWidth <= 0 || marketHeight <= 0) {
+    if (isNaN(marketWidth) || isNaN(marketHeight) || marketWidth <= 0 || marketHeight <= 0) {
         alert('Please enter the size of the room first!');
         return;
     }
@@ -32,7 +32,7 @@ function addStand(type) {
     const newStand = document.createElement('div');
     newStand.classList.add('stand');
     newStand.setAttribute('data-type', type);
-    
+
     // Check if type is custom and not previously defined
     if (!predefinedStandTypes.includes(type) && !customStandTypes[type]) {
         let color, width, height, name;
@@ -47,7 +47,7 @@ function addStand(type) {
                 color = undefined; // Reset to undefined to continue the loop
             }
         }
-        
+
         while (width === undefined || isNaN(width) || width <= 0) {
             width = prompt('What width do you want?');
             if (width === null) {
@@ -58,7 +58,7 @@ function addStand(type) {
                 width = undefined; // Reset to continue the loop
             }
         }
-        
+
         while (height === undefined || isNaN(height) || height <= 0) {
             height = prompt('What height do you want?');
             if (height === null) {
@@ -69,14 +69,14 @@ function addStand(type) {
                 height = undefined; // Reset to continue the loop
             }
         }
-        
-                while (name === undefined) {
-                    name = type;
+
+        while (name === undefined) {
+            name = type;
 
         }
 
         // Ajouter l'élément du nom du stand au stand
-        
+
 
 
         // Store custom type attributes and name
@@ -94,21 +94,21 @@ function addStand(type) {
         newStand.style.height = customStandTypes[type].height + 'px';
         newStand.style.background = customStandTypes[type].color;
         newStand.setAttribute('data-name', customStandTypes[type].name);
-                // Créer un élément pour le nom du stand
-                const name = customStandTypes[type].name;
-                const standNameElement = document.createElement('span');
-                standNameElement.textContent = name.substring(0, 4); // Utiliser les 4 premiers caractères du nom du stand
-                standNameElement.classList.add('stand-name'); // Ajouter une classe pour le styliser
-                standNameElement.style.color = 'black'; // Définir la couleur du texte en noir
-                standNameElement.style.textAlign = 'center'; // Centrer le texte
-                standNameElement.style.display = 'block'; // Assurez-vous que l'élément span se comporte comme un bloc pour permettre le centrage
-                standNameElement.style.userSelect = 'none'; // Empêcher la sélection du texte
-                standNameElement.style.pointerEvents = 'none'; // Les événements de la souris seront ignorés sur cet élément
+        // Créer un élément pour le nom du stand
+        const name = customStandTypes[type].name;
+        const standNameElement = document.createElement('span');
+        standNameElement.textContent = name.substring(0, 4); // Utiliser les 4 premiers caractères du nom du stand
+        standNameElement.classList.add('stand-name'); // Ajouter une classe pour le styliser
+        standNameElement.style.color = 'black'; // Définir la couleur du texte en noir
+        standNameElement.style.textAlign = 'center'; // Centrer le texte
+        standNameElement.style.display = 'block'; // Assurez-vous que l'élément span se comporte comme un bloc pour permettre le centrage
+        standNameElement.style.userSelect = 'none'; // Empêcher la sélection du texte
+        standNameElement.style.pointerEvents = 'none'; // Les événements de la souris seront ignorés sur cet élément
 
-               // standNameElement.style.fontSize = `calc(100% / ${x})`;//modifier caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                // Ajouter l'élément du nom du stand au stand
-                newStand.appendChild(standNameElement);
-    }else if (predefinedStandTypes.includes(type)) {
+        // standNameElement.style.fontSize = `calc(100% / ${x})`;//modifier caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        // Ajouter l'élément du nom du stand au stand
+        newStand.appendChild(standNameElement);
+    } else if (predefinedStandTypes.includes(type)) {
         // For predefined types, ask for the name each time
         let name = undefined;
         while (name === undefined) {
@@ -132,9 +132,9 @@ function addStand(type) {
         standNameElement.style.userSelect = 'none'; // Empêcher la sélection du texte
         standNameElement.style.pointerEvents = 'none'; // Les événements de la souris seront ignorés sur cet élément
 
-                    // Ajouter l'élément du nom du stand au stand
-                    newStand.appendChild(standNameElement);
-                // Créer un élément pour le nom du stand
+        // Ajouter l'élément du nom du stand au stand
+        newStand.appendChild(standNameElement);
+        // Créer un élément pour le nom du stand
 
 
     }
@@ -149,19 +149,19 @@ function addStand(type) {
     document.getElementById('market').appendChild(newStand);
 
     addStandToList(newStand);
-    
+
 }
 
 function createStandTypeButtons() {
     let name = null;
     const marketWidth = parseInt(marketWidthInput.value);
     const marketHeight = parseInt(marketHeightInput.value);
-    if (isNaN(marketWidth) ||isNaN(marketHeight)  ||marketWidth <= 0 || marketHeight <= 0) {
+    if (isNaN(marketWidth) || isNaN(marketHeight) || marketWidth <= 0 || marketHeight <= 0) {
         alert('Please enter the size of the room first!');
         return;
     }
     const buttonList = document.getElementById('buttonList');
-  
+
     while (name === null) {
         name = prompt('Type of the new stand you want to create?');
         if (name === null) {
@@ -173,7 +173,7 @@ function createStandTypeButtons() {
             name = null; // Reset name to null to continue the loop
         }
     }
-    
+
 
     const button = document.createElement('button');
     button.innerText = name;
@@ -184,7 +184,7 @@ function createStandTypeButtons() {
 }
 
 //create small-medium-large button when the page is loaded
-window.onload = function() {
+window.onload = function () {
     predefinedStandTypes.forEach(type => {
         const button = document.createElement('button');
         button.innerText = type;
@@ -196,58 +196,53 @@ window.onload = function() {
 
 
 
-// A "Définir" gomb eseménykezelője
-function initialize() {
-    const width = marketWidthInput.value;
-    const height = marketHeightInput.value;
 
-    if ((width > 0 && width < 101)&&(height > 0 && height < 101)) {
-        market.style.width = width*10 + 'px';
-        market.style.height = height*10 + 'px';
-        marketSizeText.textContent = `width: ${width}meter, height: ${height}meter`;
+function initialize() {
+    const width = parseInt(marketWidthInput.value, 10);
+    const height = parseInt(marketHeightInput.value, 10);
+    const maxSize = 800; // Taille maximale de l'affichage
+
+    if (width >= 40 && width <= 200 && height >= 40 && height <= 200) {
+        const maxDimension = Math.max(width, height);
+        scaleFactor = maxSize / maxDimension;
+
+        market.style.width = (width * scaleFactor) + 'px';
+        market.style.height = (height * scaleFactor) + 'px';
+        marketSizeText.textContent = `width: ${width} meter, height: ${height} meter`;
     } else {
-        marketSizeText.textContent = 'The interval for the stand is 1-100!';
+        marketSizeText.textContent = 'The interval for the stand is 40-200!';
     }
 }
-
-
-
-
-//TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO modifie the value of the stand
 function setStandAttributes(stand, type) {
-    let widht=marketWidthInput.value;
-    let height=marketHeightInput.value
+    let widht = marketWidthInput.value;
+    let height = marketHeightInput.value
     switch (type) {
 
         // obtain the size of stand from the database and multiply by the ration
         case 'large':
-            stand.style.width =widht+'px';
-            stand.style.height =height+'px';
-            console.log("width: " + stand.style.width);
+            stand.style.width = 7/*MIHAI's Code here*/ * scaleFactor + 'px';
+            stand.style.height = 3/*MIHAI's Code here*/ * scaleFactor + 'px';
             stand.style.background = 'red';
             stand.color = 'red';
             break;
         case 'medium':
-            stand.style.width = widht+'px';
-            stand.style.height = height+'px';
+            stand.style.width = widht/*MIHAI's Code here*/ * scaleFactor + 'px';
+            stand.style.height = height/*MIHAI's Code here*/ * scaleFactor + 'px';
             stand.style.background = 'yellow';
             stand.color = 'red';
             break;
         case 'small':
-            stand.style.width = widht+'px';
-            stand.style.height = height+'px';
+            stand.style.width = 2/*MIHAI's Code here*/ * scaleFactor + 'px';
+            stand.style.height = 3/*MIHAI's Code here*/ * scaleFactor + 'px';
             stand.style.background = 'green';
             stand.color = 'red';
             break;
-            
+
         default:
             console.log('yolo');
     }
 }
-
 // Function to add a stand to the list
-
-
 function removeStand(stand) {
     // Supprimer l'élément stand du marché
     stand.remove();
@@ -262,7 +257,7 @@ function removeStand(stand) {
         // Construire la chaîne à rechercher
         const searchString = `ID: ${stand.id}`;
         console.log("searchString: " + searchString);
-    
+
         // Vérifier si l'élément de liste contient cette chaîne spécifique
         if (item.innerText.includes(searchString)) {
             console.log("item: " + item.innerText);
@@ -270,16 +265,13 @@ function removeStand(stand) {
             item.remove();
         }
     });
-    
+
 
     console.log("listItems: " + listItems);
 
 }
+// Supprimer le stand de la liste HTML
 
-    // Supprimer le stand de la liste HTML
-
-
-    
 function addStandToList(stand) {
     const type = stand.getAttribute('data-type');
     const standDetails = {
@@ -312,7 +304,7 @@ function addStandToList(stand) {
 
     const deleteCrossForList = document.createElement('span');
     stand.getAttribute('id')
-    
+
     deleteCrossForList.innerText = ' ×';
     deleteCrossForList.style.fontSize = '20px';
     deleteCrossForList.style.color = 'red';
@@ -327,7 +319,6 @@ function addStandToList(stand) {
 
 }
 
-
 //display the list of stands
 function displayListStand() {
     //const listStand = document.getElementById('standsList');
@@ -338,7 +329,7 @@ function displayListStand() {
 
 }
 
-document.getElementById("sendDataBtn").addEventListener("click", function() {
+document.getElementById("sendDataBtn").addEventListener("click", function () {
     fetch('http://localhost:3000/clear-stands', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
@@ -357,7 +348,7 @@ document.getElementById("sendDataBtn").addEventListener("click", function() {
             X_position: stand.X, // Assurez-vous que cela correspond à 'X_position'
             Y_position: stand.Y  // Assurez-vous que cela correspond à 'Y_position'
         };
-        console.log("data to sens"+dataToSend);
+        console.log("data to sens" + dataToSend);
 
         fetch('http://localhost:3000/save-stand', {
             method: 'POST',
@@ -366,21 +357,17 @@ document.getElementById("sendDataBtn").addEventListener("click", function() {
             },
             body: JSON.stringify(dataToSend)
         })
-        .then(response => response.json())
-        .then(data => console.log('Succès:', data))
-        .catch((error) => console.error('Erreur:', error));
+            .then(response => response.json())
+            .then(data => console.log('Succès:', data))
+            .catch((error) => console.error('Erreur:', error));
     });
 });
-
-
-
-
 // Function to update the position of a stand in the list
 
 function updateStandPositionInList(stand) {
     const listItems = document.querySelectorAll('#standsList li');
     const standId = stand.getAttribute('id');
-    updateStandAttributes(standId, { X: stand.style.left , Y: stand.style.top});
+    updateStandAttributes(standId, { X: stand.style.left, Y: stand.style.top });
 
     listItems.forEach(item => {
         // Extract ID from item's innerText
@@ -394,7 +381,7 @@ function updateStandPositionInList(stand) {
             let updatedText;
 
             updatedText = `Nom: ${name}, Type: ${type}, ID: ${standId}, X: ${stand.style.left}, Y: ${stand.style.top}, Rotation: ${stand.getAttribute('data-rotation')}`;
-            
+
             item.innerText = updatedText;
 
             // Add the delete cross without overwriting the text
@@ -407,7 +394,7 @@ function updateStandPositionInList(stand) {
                 deleteCrossForList.classList.add('delete-cross-for-list');
                 deleteCrossForList.addEventListener('click', function () {
                     removeStand(stand);
-                
+
                 });
                 item.appendChild(deleteCrossForList);
             }
@@ -438,20 +425,26 @@ function getBoundingBox(stand) {
 // Updating the mousemove event listener to include collision detection
 document.getElementById('market').addEventListener('mousemove', function (event) {
     if (draggedStand) {
-        const x = event.clientX - document.getElementById('market').offsetLeft - (draggedStand.offsetWidth / 2);
-        const y = event.clientY - document.getElementById('market').offsetTop - (draggedStand.offsetHeight / 2);
+        const rect = document.getElementById('market').getBoundingClientRect();
+        const x = event.pageX - rect.left - (draggedStand.offsetWidth / 2) + window.scrollX;
+        const y = event.pageY - rect.top - (draggedStand.offsetHeight / 2) + window.scrollY;
 
-        // Potential new position for the dragged stand
+        // Ellenőrizze a terület határait és ne engedje a standot kilépni a területből
+        const maxX = rect.width - draggedStand.offsetWidth;
+        const maxY = rect.height - draggedStand.offsetHeight;
+        const newX = Math.min(Math.max(0, x), maxX);
+        const newY = Math.min(Math.max(0, y), maxY);
+
         const potentialBox = {
-            left: x,
-            right: x + draggedStand.offsetWidth,
-            top: y,
-            bottom: y + draggedStand.offsetHeight
+            left: newX,
+            right: newX + draggedStand.offsetWidth,
+            top: newY,
+            bottom: newY + draggedStand.offsetHeight
         };
 
         let collisionDetected = false;
         standHasBeenMoved = true;
-        // Check against all other stands for collision
+
         const allStands = document.querySelectorAll('.stand');
         allStands.forEach(stand => {
             if (stand !== draggedStand) {
@@ -463,20 +456,12 @@ document.getElementById('market').addEventListener('mousemove', function (event)
             }
         });
 
-        // Only update position if no collision is detected
         if (!collisionDetected) {
-            draggedStand.style.left = `${x}px`;
-            draggedStand.style.top = `${y}px`;
+            draggedStand.style.left = `${newX}px`;
+            draggedStand.style.top = `${newY}px`;
         }
     }
-}
-);
-
-
-
-
-
-
+});
 
 function rotateStand(event) {
     // Get the stand element
@@ -484,14 +469,14 @@ function rotateStand(event) {
 
     // Get the current rotation value
     const currentRotation = parseInt(stand.getAttribute('data-rotation'));
-    console.log("rotation stand avant clique:" +currentRotation);
-   
+    console.log("rotation stand avant clique:" + currentRotation);
+
     // Calculate the new rotation value (toggle between 0 and 90 degrees)
     const newRotation = (currentRotation + 90) % 180;
     updateStandAttributes(stand.getAttribute('id'), { Rotation: newRotation.toString() });
-    console.log("rotation stand apres clique:" +newRotation);
+    console.log("rotation stand apres clique:" + newRotation);
 
-    
+
     // Get the stand's dimensions
     const width = stand.offsetWidth;
     const height = stand.offsetHeight;
@@ -520,7 +505,7 @@ function rotateStand(event) {
     // Update the data-rotation attribute
     stand.setAttribute('data-rotation', newRotation.toString());
     stand.Rotation = newRotation.toString();
-    
+
     displayListStand();
 
 }
@@ -529,7 +514,7 @@ function updateStandAttributes(standID, newAttributes) {
     // Trouver le stand avec l'ID correspondant
     let stand = allStands.find(s => s.ID == standID);
     console.log("Id of modified stand : " + standID);
-    
+
 
     // Vérifier si le stand existe
     if (stand) {
@@ -593,8 +578,36 @@ document.getElementById('market').addEventListener('mousedown', function (event)
     if (event.target.classList.contains('stand')) {
         draggedStand = event.target;
         console.log("Stand has been dragged");
+        const standID = draggedStand.id;
+        highlightListItem(standID); // Kiemeljük az adott standot a listában
+
+        // Figyeljük a dokumentumon belüli mouseup eseményeket
+        document.addEventListener('mouseup', function mouseupHandler() {
+            // Töröljük a színezést a listában lévő adatoknál
+            clearHighlightedItems();
+            // Távolítsuk el az eseményfigyelőt, mivel már nem szükséges
+            document.removeEventListener('mouseup', mouseupHandler);
+        });
     }
 });
 
+function clearHighlightedItems() {
+    const listItems = document.querySelectorAll('#standsList li');
+    listItems.forEach(item => {
+        item.style.backgroundColor = ''; // Töröljük a háttérszínt az összes listaelemről
+    });
+}
+function highlightListItem(standID) {
+    const listItems = document.querySelectorAll('#standsList li');
+    listItems.forEach(item => {
+        const itemIdMatch = item.innerText.match(/ID: (\S+),/);
+        const itemId = itemIdMatch ? itemIdMatch[1] : null;
 
+        if (itemId === standID) {
+            item.style.backgroundColor = '#ff9999'; // Példa: Kiemelés sárga színnel
+        } else {
+            item.style.backgroundColor = ''; // Visszaállítjuk a többi elem színét
+        }
+    });
+}
 
