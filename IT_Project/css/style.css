@@ -27,7 +27,7 @@
 
 * {
     box-sizing: border-box !important;
-    transition: ease all 0.5s;
+    
 }
 
 html {
@@ -607,7 +607,7 @@ button {
     right: 0px;
     display: block;
     border-radius: 100px;
-}
+} */
 
 .image_2 {
     width: 100%;
