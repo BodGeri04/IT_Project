@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 
 app.post('/save-stand', (req, res) => {
     const { ID, Event_ID, Color, Name, Rotation, Type, Width, Height, X_position, Y_position } = req.body;
-    console
+
     //console.log("Reçu:", req.body); // Pour déboguer
     const sql = "INSERT INTO stands (ID, Event_ID, Color, Name, Rotation, Type, Width, Height, X_position, Y_position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     con.query(sql, [ID, Event_ID, Color, Name, Rotation, Type, Width, Height, X_position, Y_position], function(err, result) {
@@ -42,15 +42,30 @@ app.post('/save-stand', (req, res) => {
 });
 
 app.post('/clear-stands', (req, res) => {
-    const sql = "TRUNCATE TABLE stands";
-    con.query(sql, function(err, result) {
+    // Récupération de l'ID à partir de la requête
+    const eventId = req.query.eventId;
+    console.log(eventId);
+
+    // Vérifiez que l'ID est fourni
+    if (!eventId) {
+        return res.status(400).send({ message: "L'ID de l'événement est requis" });
+    }
+
+    // Requête SQL pour supprimer les lignes correspondant à l'ID
+    const sql = "DELETE FROM stands WHERE Event_ID = ?";
+    console.log(sql);
+    
+    // Exécution de la requête SQL
+    con.query(sql, [eventId], function(err, result) {
+        console.log(result);
         if (err) {
             res.status(500).send({ message: "Erreur lors de la suppression des données" });
             throw err;
         }
-        res.status(200).send({ message: "Table vidée avec succès" });
+        res.status(200).send({ message: "Données supprimées avec succès" });
     });
 });
+
 
 app.get('/getDimensions', (req, res) => {
     // Récupérer l'ID depuis la requête GET
@@ -101,6 +116,6 @@ app.get('/getStands', (req, res) => {
 
 
 app.listen(3000, () => {
-    //console.log('Serveur démarré sur le port 3000');
+    console.log('Serveur démarré sur le port 3000');
 });
 
