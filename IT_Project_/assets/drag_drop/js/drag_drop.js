@@ -32,9 +32,9 @@ let large_height;
 let large_witdh;
 
 
-let id;
+let id; // id of current event
 //
-function addStand(type) {
+function addStand(type,stand,load) {
 
     const marketWidth = parseInt(marketWidthInput.value);
     const marketHeight = parseInt(marketHeightInput.value);
@@ -43,8 +43,25 @@ function addStand(type) {
 
     const newStand = document.createElement('div');
     newStand.classList.add('stand');
-    newStand.setAttribute('data-type', type);
+    
+    if (load == true) {
+        newStand.setAttribute('data-type', stand);
+        let color, width, height, name;
+        color = type.Color;
+        width = type.Width;
+        height = type.Height;
+        name = stand;
 
+                // Store custom type attributes and name
+                customStandTypes[type] = {
+                    color: color,
+                    width: width,
+                    height: height,
+                    name: name
+                };
+    }
+    else{
+    newStand.setAttribute('data-type', type);
     // Check if type is custom and not previously defined
     if (!predefinedStandTypes.includes(type) && !customStandTypes[type]) {
         let color, width, height, name;
@@ -98,7 +115,7 @@ function addStand(type) {
             height: height,
             name: name
         };
-    }
+    }}
 
     if (customStandTypes[type]) {
         // Apply stored attributes and name for custom types
@@ -207,26 +224,29 @@ window.onload = function () {
 
 
 function setStandAttributes(stand, type) {
-
+    console.log("scaleFactorrr: " + scaleFactor);
     //console.log("width: " + market_witdh + "height: " + market_height);
     switch (type) {
-
+        
         // obtain the size of stand from the database and multiply by the ration
         case 'large':
             stand.style.width = large_witdh * scaleFactor + 'px';
             stand.style.height = large_height * scaleFactor + 'px';
+            console.log("width: " + large_witdh * scaleFactor + "height: " + large_height * scaleFactor);
             stand.style.background = 'red';
             stand.color = 'red';
             break;
         case 'medium':
             stand.style.width = medium_witdh * scaleFactor + 'px';
             stand.style.height = medium_height * scaleFactor + 'px';
+            console.log("width: " + medium_witdh * scaleFactor + "height: " + medium_height * scaleFactor);
             stand.style.background = 'yellow';
             stand.color = 'yellow';
             break;
         case 'small':
             stand.style.width = small_witdh * scaleFactor + 'px';
             stand.style.height = small_height * scaleFactor + 'px';
+            console.log("width: " + small_witdh * scaleFactor + "height: " + small_height * scaleFactor);
             stand.style.background = 'green';
             stand.color = 'green';
             break;
@@ -237,8 +257,8 @@ function setStandAttributes(stand, type) {
 }
 function removeStand(standData,fonction) {
     let standElement;
-    console.log(fonction)
-    console.log("standData: " + standData+ standData.ID);
+    //console.log(fonction)
+    //console.log("standData: " + standData+ standData.ID);
     if (isNaN(standData)== false) {
         console.log("classique data", standData);
         standElement = document.getElementById(standData.toString());
@@ -252,7 +272,7 @@ function removeStand(standData,fonction) {
      removeStandFromList(standData.ID);
     
     }
-    console.log("standElement to remove:", standElement);
+    //console.log("standElement to remove:", standElement);
     if (standElement) {
         // Supprimer l'élément DOM du stand
         standElement.remove();
@@ -307,7 +327,7 @@ function addStandToList(stand) {
     deleteCrossForList.style.cursor = 'pointer';
     deleteCrossForList.addEventListener('click', function () {
 
-        console.log("stand to remove id : " + stand.getAttribute('id'));
+        //console.log("stand to remove id : " + stand.getAttribute('id'));
         fonction="313"
         removeStand(stand.getAttribute('id'),fonction);
     });
@@ -327,7 +347,8 @@ function displayListStand() {
 }
 
 document.getElementById("sendDataBtn").addEventListener("click", function () {
-    fetch('http://localhost:3000/clear-stands', {
+    test = id;
+    fetch(`http://localhost:3000/clear-stands?eventId=${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -630,11 +651,13 @@ function highlightListItem(standID) {
     });
 }
 
-document.getElementById('saveButton').addEventListener('click', function () {
 
+//when i want to load an event
+document.getElementById('saveButton').addEventListener('click', function () {
+    let market_witdh_local, market_height_local;
     const selectedEvent = document.getElementById('eventSelect').value;
     document.getElementById('market').innerHTML = '';
-
+    //first we ask database for the dimensions of the market and the small-medium-large stand
     fetch(`http://localhost:3000/getDimensions?eventId=${selectedEvent}`)
         .then(response => {
             if (!response.ok) {
@@ -655,9 +678,11 @@ document.getElementById('saveButton').addEventListener('click', function () {
             small_witdh = dimensions.small_width;
             medium_witdh = dimensions.medium_width;
             large_witdh = dimensions.large_width;
+            market_height_local = dimensions.market_height;
+            market_witdh_local = dimensions.market_width;
             id = dimensions.id;
             market_witdh = dimensions.market_width; // Assurez-vous que le nom de la propriété correspond exactement à celui dans votre réponse
-
+            console.log("width1: " + market_witdh_local + "height: " + market_height_local);
             //console.log("width: " + market_witdh + "height: " + market_height);
             return fetch(`http://localhost:3000/getStands?eventId=${selectedEvent}`);
         })
@@ -668,77 +693,127 @@ document.getElementById('saveButton').addEventListener('click', function () {
             return response.json();
         })
         .then(data => {
+           
+    //then we ask database for each stand to display them
+    // Supposons que `data` est la liste des stands que vous avez reçue
+    allStands = []; // Vider la liste au préalable
+    let uniqueStands = new Map(); // Créer une nouvelle Map pour les types de stands uniques
+    data.forEach(stand => {
+        const dataToSend = {
+            ID: stand.ID, // Utiliser l'ID existant ou en générer un nouveau si nécessaire
+            Event_ID: stand.Event_ID, // Assurez-vous d'avoir cet ID depuis la source appropriée
+            Color: stand.Color,
+            Name: stand.Name,
+            Rotation: stand.Rotation,
+            Type: stand.Type,
+            Width: stand.Width,
+            Height: stand.Height,
+            X_position: stand.X_position, // Assurez-vous que cela correspond à la propriété attendue
+            Y_position: stand.Y_position  // Assurez-vous que cela correspond à la propriété attendue
+        };
+        stand.X = stand.X_position;
+        stand.Y = stand.Y_position;
 
+
+            // Ajout de dataToSend à la liste allStands
+            allStands.push(dataToSend);
+        
+        //console.log(dataToSend);
+
+    //obtain all the different type to display the buttons
+        if (stand.Type !== 'small' && stand.Type !== 'medium' && stand.Type !== 'large') {
+            // Vérifiez si le type de stand est déjà dans la Map
+            if (!uniqueStands.has(stand.Type)) {
+                // Si non, ajoutez-le avec son width et height
+                uniqueStands.set(stand.Type, { Width: stand.Width, Height: stand.Height,Color:stand.Color });
+            }
+        }
+
+        
+    // Si vous voulez voir ce que vous avez dans uniqueStands
+
+    createLoadButtons(uniqueStands);
+
+
+
+    });
+    
+    //we obtain the highest id of the stands to add a new stand with a new id
+    let highestID = allStands.reduce((max, stand) => {
+        // Convertir l'ID en nombre si ce n'est pas déjà le cas
+        const standID = parseInt(stand.ID);
+        
+        // Comparer avec l'ID maximum actuel
+        if (standID > max) {
+            return standID;
+        } else {
+            return max;
+        }
+    }, 0); // Initialiser à 0 ou à l'ID minimum possible
+
+    idUwU= highestID +1
+    //console.log("La valeur de l'ID la plus élevée est :", highestID);
+    
+
+
+    const maxSize = 800; // Taille maximale de l'affichage
+    if (market_witdh >= 40 && market_witdh <= 200 && market_height >= 40 && market_height <= 200) {
+        const maxDimension = Math.max(market_witdh, market_height);
+        scaleFactor = maxSize / maxDimension;
+        console.log("scaleFactor: " + scaleFactor);
+        
+        market.style.width = (market_witdh * scaleFactor) + 'px';
+        market.style.height = (market_height * scaleFactor) + 'px';
+        console.log("width3: " + market.style.width + "height: " + market.style.height);
+        marketSizeText.textContent = `width: ${market_witdh_local} meter, height: ${market_height_local} meter`;
+    } else {
+        marketSizeText.textContent = 'The interval for the stand is 40-200!';
+        //console.log("The interval for the stand is 40-200!");
+    }
+        //add all the stands to the list and to the market
+        addAllStandsToList(scaleFactor);
+            })
+            .catch(error => console.error('Erreur lors de la récupération des données:', error));
             
-// Supposons que `data` est la liste des stands que vous avez reçue
-allStands = []; // Vider la liste au préalable
-data.forEach(stand => {
-    const dataToSend = {
-        ID: stand.ID, // Utiliser l'ID existant ou en générer un nouveau si nécessaire
-        Event_ID: stand.Event_ID, // Assurez-vous d'avoir cet ID depuis la source appropriée
-        Color: stand.Color,
-        Name: stand.Name,
-        Rotation: stand.Rotation,
-        Type: stand.Type,
-        Width: stand.Width,
-        Height: stand.Height,
-        X_position: stand.X_position, // Assurez-vous que cela correspond à la propriété attendue
-        Y_position: stand.Y_position  // Assurez-vous que cela correspond à la propriété attendue
-    };
-    stand.X = stand.X_position;
-    stand.Y = stand.Y_position;
 
 
-        // Ajout de dataToSend à la liste allStands
-        allStands.push(dataToSend);
-     
-    console.log(dataToSend);
+   
+    
 
-
-
-
+    
+    // Traiter les données ici;
 
 });
-let highestID = allStands.reduce((max, stand) => {
-    // Convertir l'ID en nombre si ce n'est pas déjà le cas
-    const standID = parseInt(stand.ID);
+
+
+function createLoadButtons(uniqueStands) {
+    const buttonList = document.getElementById('buttonList');
+
+    // Effacer les boutons existants avant d'en ajouter de nouveaux
+    buttonList.innerHTML = '';
+
+    predefinedStandTypes.forEach(type => {
+        const button = document.createElement('button');
+        button.innerText = type;
+        button.style.padding = '10px';
+        document.getElementById('buttonList').appendChild(button);
+        button.onclick = () => addStand(type);
+    });
+
+
+    uniqueStands.forEach((value, type) => { 
+         const button = document.createElement('button');
+        button.innerText = type; // Utilisez 'type' comme texte du bouton
+        button.style.padding = '10px';
+        buttonList.appendChild(button);
+        
+        // Ici, vous pouvez passer soit le 'type', soit l'objet 'value' à la fonction 'addStand'
+        button.onclick = () => addStand(value,type,true); // ou addStand(value) selon ce que vous attendez dans addStand
+    });
     
-    // Comparer avec l'ID maximum actuel
-    if (standID > max) {
-        return standID;
-    } else {
-        return max;
-    }
-}, 0); // Initialiser à 0 ou à l'ID minimum possible
-
-idUwU= highestID +1
-console.log("La valeur de l'ID la plus élevée est :", highestID);
-
-addAllStandsToList();
-
-        })
-        .catch(error => console.error('Erreur lors de la récupération des données:', error));
-        console.log("scaleFactor: ");
-const maxSize = 800; // Taille maximale de l'affichage
-
-if (market_witdh >= 40 && market_witdh <= 200 && market_height >= 40 && market_height <= 200) {
-    const maxDimension = Math.max(market_witdh, market_height);
-    scaleFactor = maxSize / maxDimension;
-    console.log("scaleFactor: " + scaleFactor);
-    market.style.width = (market_witdh * scaleFactor) + 'px';
-    market.style.height = (market_height * scaleFactor) + 'px';
-    marketSizeText.textContent = `width: ${market_witdh} meter, height: ${market_height} meter`;
-} else {
-    marketSizeText.textContent = 'The interval for the stand is 40-200!';
-    //console.log("The interval for the stand is 40-200!");
 }
-// Traiter les données ici;
 
-})
-
-
-
-function addAllStandsToList() {
+function addAllStandsToList(scale) {
     // Assurez-vous que la liste des stands est claire avant d'ajouter de nouveaux éléments
     document.getElementById('standsList').innerHTML = '';
 
@@ -767,7 +842,7 @@ function addAllStandsToList() {
         
         
     });
-    addAllStandsFromList(allStands);
+    addAllStandsFromList(allStands,scale);
 }
 
 function removeStandFromList(standId) {
@@ -788,23 +863,23 @@ function removeStandFromList(standId) {
 }
 
 
-function addAllStandsFromList(standsList) {
+function addAllStandsFromList(standsList,scale) {
     let x=0;
     console.log("function start " + x);
     console.log("listItem: " + standsList.length);
     standsList.forEach(standData => {
-        addStandFromData(standData);
+        addStandFromData(standData,scale);
         console.log(x++)
     });
 }
 
-function addStandFromData(standData) {
+function addStandFromData(standData,scale) {
     const newStand = document.createElement('div');
     newStand.classList.add('stand');
     newStand.setAttribute('data-type', standData.Type);
     newStand.setAttribute('data-name', standData.Name);
     newStand.id = standData.ID;
-    console.log("standData.ID: " + standData.X_position);
+
     newStand.style.left = `${standData.X_position}px`;
     newStand.style.top = `${standData.Y_position}px`;
     
@@ -813,14 +888,14 @@ function addStandFromData(standData) {
 
 
         newStand.style.background = standData.Color;
-        console.log("standData.Color: " + standData.Color);
+
 
 
     // Taille et autres attributs pour les stands personnalisés
+        console.log("scaleFactooor: " + scale);
+        newStand.style.width = standData.Width*scale + 'px';
+        newStand.style.height = standData.Height*scale + 'px';
 
-        newStand.style.width = standData.Width + 'px';
-        newStand.style.height = standData.Height + 'px';
-        console.log("standData.Width: " + standData.X_position);
 
 
     // Ajouter l'élément du nom du stand
