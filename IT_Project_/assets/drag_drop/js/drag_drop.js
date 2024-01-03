@@ -252,7 +252,12 @@ function setStandAttributes(stand, type) {
             break;
 
         default:
-            //console.log('not default');
+            var currentWidth = parseFloat(stand.style.width);
+            var currentHeight = parseFloat(stand.style.height);
+            stand.style.width = currentWidth * scaleFactor + 'px';
+   
+            stand.style.height = currentHeight * scaleFactor + 'px';
+            console.log('not default');
     }
 }
 function removeStand(standData,fonction) {
@@ -612,24 +617,36 @@ document.getElementById('market').addEventListener('mouseup', function () {
         //console.log("Stand has been moved");
     }
 });
-
-// Event listeners for drag-and-drop functionality
 document.getElementById('market').addEventListener('mousedown', function (event) {
     if (event.target.classList.contains('stand')) {
         draggedStand = event.target;
-        //console.log("Stand has been dragged");
-        const standID = draggedStand.id;
-        highlightListItem(standID); // Kiemeljük az adott standot a listában
 
-        // Figyeljük a dokumentumon belüli mouseup eseményeket
+        let initialMouseY = event.clientY;
+        let initialStandY = draggedStand.getBoundingClientRect().top + window.scrollY;
+
+        document.addEventListener('mousemove', function (event) {
+            if (draggedStand) {
+                let newY = initialStandY + event.clientY - initialMouseY - window.scrollY;
+
+                // Try adjusting this offset if the stand is still not aligned properly
+                let adjustment = 10; // Adjust this value as needed
+                newY -= adjustment;
+
+                draggedStand.style.top = newY + 'px';
+            }
+        });
+
         document.addEventListener('mouseup', function mouseupHandler() {
-            // Töröljük a színezést a listában lévő adatoknál
-            clearHighlightedItems();
-            // Távolítsuk el az eseményfigyelőt, mivel már nem szükséges
+            document.removeEventListener('mousemove');
             document.removeEventListener('mouseup', mouseupHandler);
         });
     }
 });
+
+
+
+
+
 
 function clearHighlightedItems() {
     const listItems = document.querySelectorAll('#standsList li');
